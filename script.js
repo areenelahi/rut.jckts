@@ -3,7 +3,7 @@
    RUT STORE SETTINGS
 ================================== */
 
-// Replace with your business WhatsApp number.
+// Pakistani WhatsApp number.
 // Format: country code + number, without + or spaces.
 const whatsappNumber = "923705790274";
 
@@ -72,29 +72,6 @@ const checkoutMessage = document.getElementById("checkout-message");
 
 
 /* ==================================
-   LOAD SAVED CART
-================================== */
-
-let cart = [];
-
-try {
-  const savedCart = JSON.parse(localStorage.getItem("rut-cart"));
-
-  if (Array.isArray(savedCart)) {
-    cart = savedCart
-      .filter(item =>
-        products.some(product => product.id === item.id) &&
-        Number.isInteger(item.quantity) &&
-        item.quantity > 0 &&
-        item.quantity <= 20
-      );
-  }
-} catch (error) {
-  cart = [];
-}
-
-
-/* ==================================
    FORMAT PRICE
 ================================== */
 
@@ -104,10 +81,50 @@ function formatPrice(amount) {
 
 
 /* ==================================
+   LOAD SAVED CART
+================================== */
+
+let cart = [];
+
+try {
+  const savedCart = JSON.parse(localStorage.getItem("rut-cart"));
+
+  if (Array.isArray(savedCart)) {
+    cart = savedCart.filter(item =>
+      products.some(product => product.id === item.id) &&
+      Number.isInteger(item.quantity) &&
+      item.quantity > 0 &&
+      item.quantity <= 20
+    );
+  }
+} catch (error) {
+  cart = [];
+}
+
+
+/* ==================================
+   SAVE CART
+================================== */
+
+function saveCart() {
+  try {
+    localStorage.setItem("rut-cart", JSON.stringify(cart));
+  } catch (error) {
+    if (checkoutMessage) {
+      checkoutMessage.textContent =
+        "Your browser could not save your bag.";
+    }
+  }
+}
+
+
+/* ==================================
    DISPLAY PRODUCTS
 ================================== */
 
 function displayProducts() {
+  if (!productList) return;
+
   productList.innerHTML = "";
 
   products.forEach(product => {
@@ -162,20 +179,6 @@ function displayProducts() {
 
     productList.appendChild(card);
   });
-}
-
-
-/* ==================================
-   SAVE CART
-================================== */
-
-function saveCart() {
-  try {
-    localStorage.setItem("rut-cart", JSON.stringify(cart));
-  } catch (error) {
-    checkoutMessage.textContent =
-      "Your browser could not save the bag. Please continue carefully.";
-  }
 }
 
 
@@ -242,6 +245,8 @@ function removeFromCart(productId) {
 ================================== */
 
 function updateCart() {
+  if (!cartItems || !cartTotal || !bagCount) return;
+
   cartItems.innerHTML = "";
 
   let total = 0;
@@ -329,54 +334,73 @@ function updateCart() {
    CHECKOUT AND WHATSAPP ORDER
 ================================== */
 
-checkoutForm.addEventListener("submit", function(event) {
-  event.preventDefault();
+if (checkoutForm) {
+  checkoutForm.addEventListener("submit", function(event) {
+    event.preventDefault();
 
-  checkoutMessage.textContent = "";
+    if (checkoutMessage) {
+      checkoutMessage.textContent = "";
+    }
 
-  if (cart.length === 0) {
-    checkoutMessage.textContent =
-      "Your shopping bag is empty. Add a jacket first.";
-    return;
-  }
+    // Check whether the bag is empty.
+    if (cart.length === 0) {
+      checkoutMessage.textContent =
+        "Your shopping bag is empty. Add a jacket first.";
+      return;
+    }
 
-  if (!/^\d{10,15}$/.test(RUT_WHATSAPP_NUMBER)) {
-    checkoutMessage.textContent =
-      "Please add your correct WhatsApp number in script.js.";
-    return;
-  }
+    // Check WhatsApp number.
+    if (!/^\d{10,15}$/.test(whatsappNumber)) {
+      checkoutMessage.textContent =
+        "Please check the WhatsApp number in script.js.";
+      return;
+    }
 
-  if (!checkoutForm.reportValidity()) {
-    return;
-  }
+    // Check required form fields.
+    if (!checkoutForm.reportValidity()) {
+      return;
+    }
 
-  const formData = new FormData(checkoutForm);
+    const formData = new FormData(checkoutForm);
 
-  const customer = {
-    name: formData.get("name").trim(),
-    phone: formData.get("phone").trim(),
-    city: formData.get("city").trim(),
-    address: formData.get("address").trim(),
-    notes: formData.get("notes").trim()
-  };
+    const customer = {
+      name: String(formData.get("name") || "").trim(),
+      phone: String(formData.get("phone") || "").trim(),
+      city: String(formData.get("city") || "").trim(),
+      address: String(formData.get("address") || "").trim(),
+      notes: String(formData.get("notes") || "").trim()
+    };
 
-  let orderTotal = 0;
-  const orderLines = [];
+    // Check customer details.
+    if (
+      !customer.name ||
+      !customer.phone ||
+      !customer.city ||
+      !customer.address
+    ) {
+      checkoutMessage.textContent =
+        "Please complete all required delivery details.";
+      return;
+    }
 
-  cart.forEach(item => {
-    const product = products.find(p => p.id === item.id);
+    let orderTotal = 0;
+    const orderLines = [];
 
-    if (!product) return;
+    cart.forEach(item => {
+      const product = products.find(p => p.id === item.id);
 
-    const lineTotal = product.price * item.quantity;
-    orderTotal += lineTotal;
+      if (!product) return;
 
-    orderLines.push(
-      `${product.name} x ${item.quantity} = ${formatPrice(lineTotal)}`
-    );
-  });
+      const lineTotal = product.price * item.quantity;
+      orderTotal += lineTotal;
 
-  const message = `
+      orderLines.push(
+        `${product.name} x ${item.quantity} = ${formatPrice(lineTotal)}`
+      );
+    });
+
+    // Create WhatsApp order message.
+    const message = `
 HELLO RUT! I WOULD LIKE TO PLACE AN ORDER.
 
 CUSTOMER DETAILS
@@ -392,42 +416,36 @@ ${orderLines.join("\n")}
 
 SUBTOTAL: ${formatPrice(orderTotal)}
 
+Shipping charges: Please confirm.
+
 Order notes: ${customer.notes || "None"}
 
-Please confirm availability, delivery charges and payment details.
+Please confirm availability and payment details.
 
 Thank you!
-  `.trim();
+    `.trim();
 
-  const whatsappURL =
-    "https://wa.me/" +
-    RUT_WHATSAPP_NUMBER +
-    "?text=" +
-    encodeURIComponent(message);
+    // Open WhatsApp.
+    const whatsappURL =
+      "https://wa.me/" +
+      whatsappNumber +
+      "?text=" +
+      encodeURIComponent(message);
 
-  const newWindow = window.open(
-    whatsappURL,
-    "_blank",
-    "noopener,noreferrer"
-  );
-
-  if (!newWindow) {
-    checkoutMessage.textContent =
-      "WhatsApp could not open. Please allow pop-ups and try again.";
-    return;
-  }
-
-  checkoutMessage.textContent =
-    "Your order message is ready in WhatsApp. Review it and press Send.";
-});
+    window.location.href = whatsappURL;
+  });
+}
 
 
 /* ==================================
    FOOTER YEAR
 ================================== */
 
-document.getElementById("year").textContent =
-  new Date().getFullYear();
+const yearElement = document.getElementById("year");
+
+if (yearElement) {
+  yearElement.textContent = new Date().getFullYear();
+}
 
 
 /* ==================================
@@ -436,3 +454,4 @@ document.getElementById("year").textContent =
 
 displayProducts();
 updateCart();
+
