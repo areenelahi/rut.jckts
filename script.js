@@ -5,7 +5,7 @@
 
 // Replace with your business WhatsApp number.
 // Format: country code + number, without + or spaces.
-const RUT_WHATSAPP_NUMBER = "92XXXXXXXXXX";
+const whatsappNumber = "923705790274";
 
 
 /* ==================================
