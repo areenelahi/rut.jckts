@@ -1,0 +1,229 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>RUT | Outerwear</title>
+  <meta name="description" content="RUT — timeless new and pre-loved outerwear.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- HEADER -->
+
+  <header class="header">
+    <a href="#" class="logo">
+      <span class="urdu">رُت</span>
+      <span class="brand-name">RUT</span>
+    </a>
+
+    <nav class="navigation">
+      <a href="#shop">SHOP</a>
+      <a href="#about">ABOUT</a>
+      <a href="#bag">BAG (<span id="bag-count">0</span>)</a>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- HERO -->
+
+    <section class="hero">
+      <div class="hero-image">
+        <img src="hero.jpg.png" alt="RUT outerwear collection">
+      </div>
+
+      <div class="hero-content">
+        <p class="eyebrow">THE ART OF OUTERWEAR</p>
+
+        <h1>Wear a story.<br>Make it yours.</h1>
+
+        <p class="hero-description">
+          Carefully selected pieces. Timeless layers.
+          Made for your next chapter.
+        </p>
+
+        <a href="#shop" class="main-button">
+          EXPLORE COLLECTION
+        </a>
+      </div>
+    </section>
+
+    <!-- INTRO -->
+
+    <section class="intro">
+      <p>RUT — رُت</p>
+      <h2>Pieces with a past.<br>Made for what comes next.</h2>
+    </section>
+
+    <!-- PRODUCTS -->
+
+    <section class="shop" id="shop">
+
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">THE COLLECTION</p>
+          <h2>Find Your Jacket</h2>
+        </div>
+
+        <p class="section-note">
+          A selection of everyday favourites.
+        </p>
+      </div>
+
+      <div class="products" id="product-list"></div>
+
+    </section>
+
+    <!-- ABOUT -->
+
+    <section class="about" id="about">
+
+      <div class="about-content">
+        <p class="eyebrow">A LITTLE ABOUT US</p>
+
+        <h2>Not just another jacket.</h2>
+
+        <p>
+          RUT is about finding pieces that feel personal.
+          From timeless classics to pre-loved finds,
+          every jacket deserves another story.
+        </p>
+      </div>
+
+      <div class="about-mark">رُت</div>
+
+    </section>
+
+    <!-- SHOPPING BAG AND CHECKOUT -->
+
+    <section class="bag-section" id="bag">
+
+      <p class="eyebrow">YOUR SELECTION</p>
+      <h2>Your Shopping Bag</h2>
+
+      <div id="cart-items">
+        <p class="empty-message">Your bag is currently empty.</p>
+      </div>
+
+      <div class="bag-total">
+        <span>Subtotal</span>
+        <strong id="cart-total">Rs. 0</strong>
+      </div>
+
+      <p class="delivery-note">
+        Delivery charges will be confirmed before your order.
+      </p>
+
+      <!-- CHECKOUT FORM -->
+
+      <div class="checkout">
+
+        <p class="eyebrow">ALMOST YOURS</p>
+        <h3>Delivery Details</h3>
+
+        <p class="form-intro">
+          Enter your details so we can contact you about your order.
+        </p>
+
+        <form id="checkout-form">
+
+          <label for="customer-name">Full name *</label>
+          <input
+            id="customer-name"
+            name="name"
+            type="text"
+            placeholder="Your full name"
+            maxlength="80"
+            required
+          >
+
+          <label for="customer-phone">Phone number *</label>
+          <input
+            id="customer-phone"
+            name="phone"
+            type="tel"
+            placeholder="03XXXXXXXXX"
+            maxlength="20"
+            required
+          >
+
+          <label for="customer-city">City *</label>
+          <input
+            id="customer-city"
+            name="city"
+            type="text"
+            placeholder="Your city"
+            maxlength="60"
+            required
+          >
+
+          <label for="customer-address">Full delivery address *</label>
+          <textarea
+            id="customer-address"
+            name="address"
+            placeholder="House number, street, area..."
+            maxlength="300"
+            required
+          ></textarea>
+
+          <label for="order-notes">Order notes (optional)</label>
+          <textarea
+            id="order-notes"
+            name="notes"
+            placeholder="Size preference or other details..."
+            maxlength="300"
+          ></textarea>
+
+          <p class="privacy-note">
+            Your information will be included in your WhatsApp
+            order message. Only provide details needed for delivery.
+          </p>
+
+          <button type="submit" class="checkout-button">
+            CONTINUE TO WHATSAPP
+          </button>
+
+        </form>
+
+        <p
+          id="checkout-message"
+          class="checkout-message"
+          aria-live="polite"
+        ></p>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+
+  <footer class="footer">
+
+    <div class="footer-logo">
+      رُت <span>RUT</span>
+    </div>
+
+    <p>Outerwear with a story.</p>
+
+    <p class="copyright">
+      © <span id="year"></span> RUT. All rights reserved.
+    </p>
+
+  </footer>
+
+  <script src="script.js"></script>
+
+</body>
+</html>
