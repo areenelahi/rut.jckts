@@ -15,7 +15,7 @@ const whatsappNumber = "923705790274";
 const products = [
   {
     id: 1,
-    name: "Vintage Leather Jacket",
+    name: "Vintage  Jacket",
     category: "PRE-LOVED",
     price: 4500,
     image: "jacket1.jpg"
