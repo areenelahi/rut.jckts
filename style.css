@@ -629,5 +629,48 @@ img {
     font-size: 8px;
     padding: 11px 3px;
   }
+   
+/* ==================================
+   RUT - FINAL PRODUCT IMAGE FIX
+================================== */
+
+#product-list {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 25px 14px !important;
+    width: 100% !important;
+}
+
+#product-list .product-card {
+    width: 100% !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+}
+
+#product-list .product-image {
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 3 / 4 !important;
+    overflow: hidden !important;
+    position: relative !important;
+}
+
+#product-list .product-image img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center center !important;
+    display: block !important;
+}
+
+/* All phone sizes */
+
+@media screen and (max-width: 600px) {
+    #product-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 20px 10px !important;
+    }
+}
+
 }
 
