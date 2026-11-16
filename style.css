@@ -1,5 +1,3 @@
-
-
 /* ==================================
    RUT — LUXURY OUTERWEAR STORE
    RESPONSIVE STYLESHEET
@@ -629,48 +627,65 @@ img {
     font-size: 8px;
     padding: 11px 3px;
   }
-   
+}
+
 /* ==================================
-   RUT - FINAL PRODUCT IMAGE FIX
+   PRODUCT IMAGE GALLERY
 ================================== */
 
-#product-list {
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 25px 14px !important;
-    width: 100% !important;
+.product-gallery {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 7px;
+  margin-top: 10px;
 }
 
-#product-list .product-card {
-    width: 100% !important;
-    min-width: 0 !important;
-    overflow: hidden !important;
+.gallery-thumbnail {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  padding: 0;
+  border: 1px solid #d9d0c3;
+  background: #e7dfd1;
+  cursor: pointer;
+  overflow: hidden;
+  opacity: 0.7;
+  transition: all 0.2s ease;
 }
 
-#product-list .product-image {
-    width: 100% !important;
-    height: auto !important;
-    aspect-ratio: 3 / 4 !important;
-    overflow: hidden !important;
-    position: relative !important;
+.gallery-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
-#product-list .product-image img {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover !important;
-    object-position: center center !important;
-    display: block !important;
+.gallery-thumbnail:hover {
+  opacity: 1;
 }
 
-/* All phone sizes */
-
-@media screen and (max-width: 600px) {
-    #product-list {
-        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-        gap: 20px 10px !important;
-    }
+.gallery-thumbnail.active {
+  border: 2px solid #26231f;
+  opacity: 1;
 }
 
+/* Disabled add-to-bag button */
+
+.add-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.add-button:disabled:hover {
+  background: transparent;
+  color: var(--dark);
+}
+
+/* Mobile gallery */
+
+@media (max-width: 600px) {
+  .product-gallery {
+    gap: 4px;
+    margin-top: 6px;
+  }
 }
 
