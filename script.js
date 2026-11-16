@@ -3,8 +3,6 @@
    RUT STORE SETTINGS
 ================================== */
 
-// Pakistani WhatsApp number.
-// Format: country code + number, without + or spaces.
 const whatsappNumber = "923705790274";
 
 
@@ -14,46 +12,18 @@ const whatsappNumber = "923705790274";
 
 const products = [
   {
-    id: 1,
-    name: "Vintage  Jacket",
-    category: "PRE-LOVED",
-    price: 4500,
-    image: "jacket1.jpg"
-  },
-  {
-    id: 2,
-    name: "Classic Black Jacket",
-    category: "NEW ARRIVAL",
-    price: 3800,
-    image: "jacket2.jpg"
-  },
-  {
-    id: 3,
-    name: "Vintage Denim Jacket",
-    category: "PRE-LOVED",
-    price: 3200,
-    image: "jacket3.jpg"
-  },
-  {
-    id: 4,
-    name: "Oversized Streetwear",
-    category: "NEW ARRIVAL",
-    price: 4200,
-    image: "jacket4.jpg"
-  },
-  {
-    id: 5,
-    name: "Brown Suede Jacket",
-    category: "PRE-LOVED",
-    price: 5000,
-    image: "jacket5.webp"
-  },
-  {
-    id: 6,
-    name: "Everyday Outerwear",
-    category: "NEW ARRIVAL",
-    price: 3500,
-    image: "jacket6.jpg"
+    id: 101,
+    name: "Bombar Jacket",
+    category: "JACKET",
+    price: 5499,
+    image: "pic4.jpeg",
+    images: [
+      "pic4.jpeg",
+      "pic2.jpeg",
+      "pic3.jpeg",
+      "pic1.jpeg",
+      "pic5.jpeg"
+    ]
   }
 ];
 
@@ -66,7 +36,6 @@ const productList = document.getElementById("product-list");
 const cartItems = document.getElementById("cart-items");
 const cartTotal = document.getElementById("cart-total");
 const bagCount = document.getElementById("bag-count");
-
 const checkoutForm = document.getElementById("checkout-form");
 const checkoutMessage = document.getElementById("checkout-message");
 
@@ -81,7 +50,7 @@ function formatPrice(amount) {
 
 
 /* ==================================
-   LOAD SAVED CART
+   SHOPPING CART STORAGE
 ================================== */
 
 let cart = [];
@@ -101,55 +70,108 @@ try {
   cart = [];
 }
 
-
-/* ==================================
-   SAVE CART
-================================== */
-
 function saveCart() {
   try {
     localStorage.setItem("rut-cart", JSON.stringify(cart));
   } catch (error) {
-    if (checkoutMessage) {
-      checkoutMessage.textContent =
-        "Your browser could not save your bag.";
-    }
+    console.warn("Could not save shopping bag", error);
   }
 }
 
 
 /* ==================================
-   DISPLAY PRODUCTS
+   DISPLAY JACKET PRODUCTS
 ================================== */
 
 function displayProducts() {
-  if (!productList) return;
+  if (!productList) {
+    console.error("Product list element not found");
+    return;
+  }
 
   productList.innerHTML = "";
 
   products.forEach(product => {
+
     const card = document.createElement("article");
     card.className = "product-card";
+
+    // Main jacket image
 
     const imageBox = document.createElement("div");
     imageBox.className = "product-image";
 
-    const img = document.createElement("img");
-    img.src = product.image;
-    img.alt = product.name;
-    img.loading = "lazy";
+    const mainImage = document.createElement("img");
+    mainImage.src = product.image;
+    mainImage.alt = product.name;
+    mainImage.loading = "lazy";
 
-    img.onerror = function() {
-      imageBox.innerHTML = "";
+    mainImage.onerror = function () {
+      mainImage.style.display = "none";
 
-      const placeholder = document.createElement("div");
-      placeholder.className = "image-placeholder";
-      placeholder.textContent = product.name;
+      let placeholder = imageBox.querySelector(".image-placeholder");
 
-      imageBox.appendChild(placeholder);
+      if (!placeholder) {
+        placeholder = document.createElement("div");
+        placeholder.className = "image-placeholder";
+        imageBox.appendChild(placeholder);
+      }
+
+      placeholder.textContent = "Image not found";
     };
 
-    imageBox.appendChild(img);
+    mainImage.onload = function () {
+      mainImage.style.display = "block";
+
+      const placeholder = imageBox.querySelector(".image-placeholder");
+      if (placeholder) placeholder.remove();
+    };
+
+    imageBox.appendChild(mainImage);
+
+    // Five jacket photos
+
+    const gallery = document.createElement("div");
+    gallery.className = "product-gallery";
+
+    const images = product.images || [product.image];
+
+    images.forEach((image, index) => {
+
+      const thumbnail = document.createElement("button");
+      thumbnail.type = "button";
+      thumbnail.className = "gallery-thumbnail";
+      thumbnail.setAttribute(
+        "aria-label",
+        "View jacket photo " + (index + 1)
+      );
+
+      if (index === 0) {
+        thumbnail.classList.add("active");
+      }
+
+      const thumbnailImage = document.createElement("img");
+      thumbnailImage.src = image;
+      thumbnailImage.alt = product.name + " photo " + (index + 1);
+      thumbnailImage.loading = "lazy";
+
+      thumbnail.appendChild(thumbnailImage);
+
+      thumbnail.addEventListener("click", () => {
+
+        mainImage.src = image;
+        mainImage.alt = thumbnailImage.alt;
+
+        gallery.querySelectorAll(".gallery-thumbnail")
+          .forEach(btn => btn.classList.remove("active"));
+
+        thumbnail.classList.add("active");
+      });
+
+      gallery.appendChild(thumbnail);
+    });
+
+    // Product details
 
     const info = document.createElement("div");
     info.className = "product-info";
@@ -165,6 +187,8 @@ function displayProducts() {
     price.className = "product-price";
     price.textContent = formatPrice(product.price);
 
+    // Add to bag
+
     const button = document.createElement("button");
     button.className = "add-button";
     button.type = "button";
@@ -175,7 +199,8 @@ function displayProducts() {
     });
 
     info.append(category, name, price, button);
-    card.append(imageBox, info);
+
+    card.append(imageBox, gallery, info);
 
     productList.appendChild(card);
   });
@@ -187,6 +212,9 @@ function displayProducts() {
 ================================== */
 
 function addToCart(productId) {
+  const product = products.find(p => p.id === productId);
+  if (!product) return;
+
   const existingItem = cart.find(item => item.id === productId);
 
   if (existingItem) {
@@ -213,7 +241,6 @@ function addToCart(productId) {
 
 function changeQuantity(productId, amount) {
   const item = cart.find(item => item.id === productId);
-
   if (!item) return;
 
   item.quantity += amount;
@@ -254,7 +281,6 @@ function updateCart() {
 
   cart.forEach(item => {
     const product = products.find(p => p.id === item.id);
-
     if (!product) return;
 
     const lineTotal = product.price * item.quantity;
@@ -319,7 +345,6 @@ function updateCart() {
     const empty = document.createElement("p");
     empty.className = "empty-message";
     empty.textContent = "Your bag is currently empty.";
-
     cartItems.appendChild(empty);
   }
 
@@ -331,7 +356,7 @@ function updateCart() {
 
 
 /* ==================================
-   CHECKOUT AND WHATSAPP ORDER
+   WHATSAPP CHECKOUT
 ================================== */
 
 if (checkoutForm) {
@@ -342,24 +367,23 @@ if (checkoutForm) {
       checkoutMessage.textContent = "";
     }
 
-    // Check whether the bag is empty.
     if (cart.length === 0) {
-      checkoutMessage.textContent =
-        "Your shopping bag is empty. Add a jacket first.";
+      if (checkoutMessage) {
+        checkoutMessage.textContent =
+          "Your shopping bag is empty. Add a jacket first.";
+      }
       return;
     }
 
-    // Check WhatsApp number.
     if (!/^\d{10,15}$/.test(whatsappNumber)) {
-      checkoutMessage.textContent =
-        "Please check the WhatsApp number in script.js.";
+      if (checkoutMessage) {
+        checkoutMessage.textContent =
+          "Please check the WhatsApp number in script.js.";
+      }
       return;
     }
 
-    // Check required form fields.
-    if (!checkoutForm.reportValidity()) {
-      return;
-    }
+    if (!checkoutForm.reportValidity()) return;
 
     const formData = new FormData(checkoutForm);
 
@@ -371,15 +395,12 @@ if (checkoutForm) {
       notes: String(formData.get("notes") || "").trim()
     };
 
-    // Check customer details.
-    if (
-      !customer.name ||
-      !customer.phone ||
-      !customer.city ||
-      !customer.address
-    ) {
-      checkoutMessage.textContent =
-        "Please complete all required delivery details.";
+    if (!customer.name || !customer.phone ||
+        !customer.city || !customer.address) {
+      if (checkoutMessage) {
+        checkoutMessage.textContent =
+          "Please complete all required delivery details.";
+      }
       return;
     }
 
@@ -388,7 +409,6 @@ if (checkoutForm) {
 
     cart.forEach(item => {
       const product = products.find(p => p.id === item.id);
-
       if (!product) return;
 
       const lineTotal = product.price * item.quantity;
@@ -399,7 +419,6 @@ if (checkoutForm) {
       );
     });
 
-    // Create WhatsApp order message.
     const message = `
 HELLO RUT! I WOULD LIKE TO PLACE AN ORDER.
 
@@ -425,7 +444,6 @@ Please confirm availability and payment details.
 Thank you!
     `.trim();
 
-    // Open WhatsApp.
     const whatsappURL =
       "https://wa.me/" +
       whatsappNumber +
