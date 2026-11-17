@@ -3,7 +3,7 @@
    RUT STORE SETTINGS
 ================================== */
 
-const whatsappNumber = "923705790274";
+const whatsappNumber = "923710998109";
 
 
 /* ==================================
